@@ -8,11 +8,10 @@ contract VAI is ERC20, Ownable {
     constructor(
         string memory name,
         string memory symbol,
-        uint256 initialSupply,
-        address initialOwner
-    ) ERC20(name, symbol) Ownable(initialOwner) {
+        uint256 initialSupply
+    ) ERC20(name, symbol) Ownable(msg.sender) {
         if (initialSupply > 0) {
-            _mint(initialOwner, initialSupply);
+            _mint(owner(), initialSupply);
         }
     }
 
