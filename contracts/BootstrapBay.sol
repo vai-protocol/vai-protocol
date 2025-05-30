@@ -5,5 +5,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IBootstrapBay.sol";
 
 contract BootstrapBay is IBootstrapBay, Ownable {
-    constructor() Ownable(msg.sender) {}
+    Round public _currentRound;
+
+    constructor(Round memory round) Ownable(msg.sender) {
+        _currentRound = round;
+    }
+
+    function getCurrentRound() external view returns (Round memory) {
+        return _currentRound;
+    }
 }
