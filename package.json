@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Core Smart Contracts for VAI Protocol",
   "author": "VAI Developers <developers@vaiprotocol.com>",
-  "license": "ISC",
+  "license": "MIT",
   "keywords": [
     "vai",
     "protocol",
@@ -12,30 +12,32 @@
     "decentralized-finance"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "precompile": "hardhat clean",
+    "compile": "hardhat compile",
+    "test": "hardhat test"
   },
-  "packageManager": "pnpm@10.11.0",
   "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
     "@nomicfoundation/hardhat-ignition": "^0.15.11",
-    "@nomicfoundation/hardhat-ignition-viem": "^0.15.11",
+    "@nomicfoundation/hardhat-ignition-ethers": "^0.15.11",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.12",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
     "@nomicfoundation/hardhat-verify": "^2.0.14",
-    "@nomicfoundation/hardhat-viem": "^2.0.6",
+    "@typechain/ethers-v6": "^0.5.1",
+    "@typechain/hardhat": "^9.1.0",
     "@types/chai": "^4.3.20",
-    "@types/chai-as-promised": "^7.1.8",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.15.27",
     "chai": "^4.5.0",
+    "dotenv": "^16.5.0",
+    "ethers": "^6.14.3",
     "hardhat": "^2.24.1",
     "hardhat-gas-reporter": "^1.0.10",
     "solidity-coverage": "^0.8.16",
     "ts-node": "^10.9.2",
-    "typescript": "~5.0.4",
-    "viem": "^2.30.5"
+    "typechain": "^8.3.2",
+    "typescript": "^5.8.3"
   },
-  "dependencies": {
-    "@openzeppelin/contracts": "^5.3.0"
-  }
+  "packageManager": "pnpm@10.11.0"
 }
