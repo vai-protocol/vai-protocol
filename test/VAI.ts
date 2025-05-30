@@ -24,10 +24,31 @@ describe("Value Artificial Intelligence", function () {
   }
 
   describe("Deployment", function () {
+    it("Should set the right name and symbol", async function () {
+      const { token } = await loadFixture(deployFixture);
+
+      expect(await token.name()).to.equal("Value Artificial Intelligence");
+      expect(await token.symbol()).to.equal("VAI");
+    });
+
     it("Should set the right owner", async function () {
       const { token, owner } = await loadFixture(deployFixture);
 
       expect(await token.owner()).to.equal(owner.address);
+    });
+
+    it("Should assign the total supply to the owner", async function () {
+      const { token, owner } = await loadFixture(deployFixture);
+      const INITIAL_SUPPLY = 391 * 1_000_000_000; // 391 billion VAIs
+
+      expect(await token.totalSupply()).to.equal(INITIAL_SUPPLY);
+      expect(await token.balanceOf(owner.address)).to.equal(INITIAL_SUPPLY);
+    });
+
+    it("Should set the correct decimals", async function () {
+      const { token } = await loadFixture(deployFixture);
+
+      expect(await token.decimals()).to.equal(18);
     });
   });
 });
