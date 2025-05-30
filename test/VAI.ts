@@ -48,7 +48,7 @@ describe("Value Artificial Intelligence", function () {
     it("Should set the correct decimals", async function () {
       const { token } = await loadFixture(deployFixture);
 
-      expect(await token.decimals()).to.equal(18);
+      expect(await token.decimals()).to.equal(9);
     });
   });
 });
