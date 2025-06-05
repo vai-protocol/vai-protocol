@@ -7,7 +7,14 @@ describe("Bootstrap Bay", function () {
     const [owner, otherAccount] = await hre.ethers.getSigners();
 
     const BootstrapBay = await hre.ethers.getContractFactory("BootstrapBay");
-    const bootstrapBay = await BootstrapBay.deploy();
+    const bootstrapBay = await BootstrapBay.deploy({
+      entry: hre.ethers.parseEther("1"),
+      pool: hre.ethers.parseEther("1"),
+      slots: 10,
+      reserve: hre.ethers.parseEther("1"),
+      deadline: 1717641600,
+      isActive: true,
+    });
 
     return { bootstrapBay, owner, otherAccount };
   }
