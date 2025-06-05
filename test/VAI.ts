@@ -7,7 +7,7 @@ const VAI_SYMBOL = "VAI";
 const VAI_DECIMALS = 9;
 const INITIAL_SUPPLY_IN_VAI = 391 * 1_000_000_000; // 391 billion VAIs
 
-describe("Value Artificial Intelligence", function () {
+describe("VAI", function () {
   // We define a fixture to reuse the same setup in every test.
   // We use loadFixture to run this setup once, snapshot that state,
   // and reset Hardhat Network to that snapshot in every test.
@@ -16,12 +16,7 @@ describe("Value Artificial Intelligence", function () {
     const [owner, otherAccount] = await hre.ethers.getSigners();
 
     const VAI = await hre.ethers.getContractFactory("VAI");
-    const token = await VAI.deploy(
-      VAI_NAME,
-      VAI_SYMBOL,
-      INITIAL_SUPPLY_IN_VAI,
-      owner.address
-    );
+    const token = await VAI.deploy(VAI_NAME, VAI_SYMBOL, INITIAL_SUPPLY_IN_VAI);
 
     return { token, owner, otherAccount };
   }
