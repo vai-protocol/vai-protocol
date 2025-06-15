@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "vai-protocol",
   "private": true,
   "scripts": {
     "build": "turbo run build",
