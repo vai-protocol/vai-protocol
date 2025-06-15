@@ -11,10 +11,15 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@reown/appkit": "^1.7.9",
+    "@reown/appkit-adapter-wagmi": "^1.7.9",
     "@repo/ui": "workspace:*",
+    "@tanstack/react-query": "^5.80.7",
     "next": "^15.3.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "viem": "^2.31.2",
+    "wagmi": "^2.15.6"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
