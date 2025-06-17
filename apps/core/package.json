@@ -14,7 +14,14 @@
   "scripts": {
     "precompile": "hardhat clean",
     "compile": "hardhat compile",
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "deploy:vai": "hardhat run scripts/deploy/01-deploy-vai-token.ts",
+    "deploy:membership": "hardhat run scripts/deploy/02-deploy-membership.ts",
+    "deploy:bootstrap": "hardhat run scripts/deploy/03-deploy-bootstrap-bay.ts",
+    "deploy:all": "hardhat run scripts/deploy/deploy-all.ts",
+    "deploy:testnet": "pnpm deploy:all --network bscTestnet",
+    "deploy:mainnet": "pnpm deploy:all --network bsc",
+    "verify": "hardhat verify"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",

@@ -12,28 +12,48 @@ interface IBootstrapBay {
         bool isActive; // Whether round is still accepting contributions
     }
 
-    // // Events
-    // event RoundStarted(uint256 roundId, uint256 entryFee, uint256 bnbPool, uint256 deadline, uint256 vaiReserve);
-    // event RoundClosed(uint256 roundId, uint256[] winners);
-    // event ContributionMade(address indexed contributor, uint256 roundId, uint256 amount);
-    // event Qualified(address indexed contributor, uint256 roundId);
-    // event VAIReserveBurned(uint256 amount);
+    struct ContributorInfo {
+        uint256 contribution;
+        uint256 referralBonus;
+        bool hasWithdrawn;
+        address referrer;
+        uint256 contributedAt;
+    }
 
-    // // State view functions
-    // function getCurrentRound() external view returns (Round memory);
-    // function getContribution(address contributor) external view returns (uint256);
-    // function getReferralCount(address contributor) external view returns (uint256);
+    // Events
+    event ContributionMade(address indexed contributor, uint256 amount, address indexed referrer);
+    event ReferralBonusEarned(address indexed referrer, address indexed contributor, uint256 bonus);
+    event RewardsCalculated(uint256 bnbRewardPerContributor, uint256 vaiRewardPerContributor);
+    event RewardClaimed(address indexed contributor, uint256 bnbAmount, uint256 vaiAmount);
+    event RoundClosed(uint256 totalContributions, uint256 totalContributors);
 
-    // // Core functions
-    // function contribute() external payable;
-    // function closeRound(uint256 roundId) external;
-    // function initRound(uint256 entryFee, uint256 bnbPool, uint256 specialSlots, uint256 duration, uint256 vaiReserve) external;
+    // Core functions
+    function contribute() external payable;
+    function claimRewards() external;
+    function getCurrentRound() external view returns (Round memory);
+    function getContributorInfo(address contributor) external view returns (ContributorInfo memory);
 
-    // // Admin functions
-    // function setCurrentRoundId(uint256 roundId) external;
-    // function setCurrentRoundEntryFee(uint256 entryFee) external;
-    // function setCurrentRoundBNBPool(uint256 bnbPool) external;
-    // function setCurrentRoundSpecialSlots(uint256 specialSlots) external;
-    // function setCurrentRoundDeadline(uint256 deadline) external;
-    // function setCurrentRoundVAIReserve(uint256 vaiReserve) external;
+    // Round management
+    function calculateRewards() external;
+    function closeRound() external;
+    function updateRound(Round memory newRound) external;
+
+    // Contract integration
+    function setMembershipContract(address membershipAddress) external;
+    function setVAIContract(address payable vaiAddress) external;
+    function depositVAIRewards(uint256 amount) external;
+
+    // Statistics
+    function getRoundStatistics() external view returns (
+        uint256 contributions,
+        uint256 contributors_count,
+        uint256 referralBonuses,
+        uint256 availableSlots,
+        bool isActive,
+        bool rewardsCalculated
+    );
+    function getAllContributors() external view returns (address[] memory);
+
+    // Emergency functions
+    function emergencyWithdraw() external;
 }
