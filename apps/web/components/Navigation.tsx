@@ -56,12 +56,23 @@ const Navigation = () => {
             <Link
               href="/"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActiveLink("/")
+                isActiveLink("/") && pathname === "/"
                   ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
                   : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
               }`}
             >
               Home
+            </Link>
+
+            <Link
+              href="/dashboard"
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActiveLink("/dashboard")
+                  ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
+                  : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              }`}
+            >
+              Dashboard
             </Link>
 
             <Link
@@ -199,12 +210,23 @@ const Navigation = () => {
             <Link
               href="/"
               className={`block px-3 py-2 rounded-md text-base font-medium ${
-                isActiveLink("/")
+                isActiveLink("/") && pathname === "/"
                   ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
                   : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
               }`}
             >
               Home
+            </Link>
+
+            <Link
+              href="/dashboard"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                isActiveLink("/dashboard")
+                  ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
+                  : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              }`}
+            >
+              Dashboard
             </Link>
 
             <Link
