@@ -2,7 +2,7 @@ import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { getContract } from "viem";
 import { getContractAddress } from "../config/contracts";
 
-// Simple ABI definitions (minimal for now, will be replaced with full ABIs)
+// Expanded VAI Token ABI
 const VAI_ABI = [
   {
     "inputs": [{"name": "_spender", "type": "address"}, {"name": "_value", "type": "uint256"}],
@@ -15,12 +15,49 @@ const VAI_ABI = [
     "name": "balanceOf", 
     "outputs": [{"name": "balance", "type": "uint256"}],
     "type": "function"
+  },
+  {
+    "inputs": [{"name": "to", "type": "address"}, {"name": "amount", "type": "uint256"}],
+    "name": "transfer",
+    "outputs": [{"name": "", "type": "bool"}],
+    "type": "function"
+  },
+  {
+    "inputs": [{"name": "from", "type": "address"}, {"name": "to", "type": "address"}, {"name": "amount", "type": "uint256"}],
+    "name": "transferFrom",
+    "outputs": [{"name": "", "type": "bool"}],
+    "type": "function"
+  },
+  {
+    "inputs": [{"name": "owner", "type": "address"}, {"name": "spender", "type": "address"}],
+    "name": "allowance",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalSupply",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [{"name": "", "type": "uint8"}],
+    "type": "function"
   }
 ] as const;
 
+// Expanded Membership ABI
 const MEMBERSHIP_ABI = [
   {
     "inputs": [],
+    "name": "join",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [{"name": "refId", "type": "address"}],
     "name": "join",
     "outputs": [],
     "type": "function"
@@ -30,9 +67,46 @@ const MEMBERSHIP_ABI = [
     "name": "isMember",
     "outputs": [{"name": "", "type": "bool"}],
     "type": "function"
+  },
+  {
+    "inputs": [{"name": "memberAddr", "type": "address"}],
+    "name": "getMemberInfo",
+    "outputs": [{
+      "name": "",
+      "type": "tuple",
+      "components": [
+        {"name": "adaptation", "type": "uint256"},
+        {"name": "referrer", "type": "address"},
+        {"name": "totalEarnings", "type": "uint256"},
+        {"name": "referralEarnings", "type": "uint256"},
+        {"name": "referralCount", "type": "uint256"},
+        {"name": "isActive", "type": "bool"},
+        {"name": "joinedAt", "type": "uint256"}
+      ]
+    }],
+    "type": "function"
+  },
+  {
+    "inputs": [{"name": "member", "type": "address"}],
+    "name": "getClaimableCommissions",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "type": "function"
+  },
+  {
+    "inputs": [{"name": "member", "type": "address"}],
+    "name": "getReferralEarnings",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "claimCommissions",
+    "outputs": [],
+    "type": "function"
   }
 ] as const;
 
+// Expanded Bootstrap Bay ABI
 const BOOTSTRAP_BAY_ABI = [
   {
     "inputs": [],
@@ -44,7 +118,53 @@ const BOOTSTRAP_BAY_ABI = [
   {
     "inputs": [],
     "name": "getCurrentRound",
-    "outputs": [{"name": "", "type": "tuple"}],
+    "outputs": [{
+      "name": "",
+      "type": "tuple",
+      "components": [
+        {"name": "entry", "type": "uint256"},
+        {"name": "pool", "type": "uint256"},
+        {"name": "slots", "type": "uint256"},
+        {"name": "reserve", "type": "uint256"},
+        {"name": "deadline", "type": "uint256"},
+        {"name": "isActive", "type": "bool"}
+      ]
+    }],
+    "type": "function"
+  },
+  {
+    "inputs": [{"name": "contributor", "type": "address"}],
+    "name": "getContributorInfo",
+    "outputs": [{
+      "name": "",
+      "type": "tuple",
+      "components": [
+        {"name": "contribution", "type": "uint256"},
+        {"name": "referralBonus", "type": "uint256"},
+        {"name": "hasWithdrawn", "type": "bool"},
+        {"name": "referrer", "type": "address"},
+        {"name": "contributedAt", "type": "uint256"}
+      ]
+    }],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRoundStatistics",
+    "outputs": [
+      {"name": "contributions", "type": "uint256"},
+      {"name": "contributors_count", "type": "uint256"},
+      {"name": "referralBonuses", "type": "uint256"},
+      {"name": "availableSlots", "type": "uint256"},
+      {"name": "isActive", "type": "bool"},
+      {"name": "rewardsCalculated", "type": "bool"}
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "claimRewards",
+    "outputs": [],
     "type": "function"
   }
 ] as const;

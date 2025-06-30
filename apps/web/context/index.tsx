@@ -36,7 +36,7 @@ if (!projectId) {
     networks: networks,
     defaultNetwork: defaultNetwork,
     metadata,
-    enableNetworkSwitch: false,
+    // enableNetworkSwitch: false,
     features: {
       analytics: true,
       email: false,

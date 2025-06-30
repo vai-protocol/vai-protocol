@@ -18,14 +18,20 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       allowUnlimitedContractSize: false,
+      chainId: 31337,
+    },
+    localhost: {
+      url: "http://127.0.0.1:8545",
+      chainId: 31337,
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
     },
     bsc: {
-      url: BSC_RPC_URL || "",
+      url: BSC_RPC_URL || "https://bsc-dataseed.binance.org",
       chainId: 56,
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
     },
     bscTestnet: {
-      url: BSC_TESTNET_RPC_URL || "",
+      url: BSC_TESTNET_RPC_URL || "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
     },

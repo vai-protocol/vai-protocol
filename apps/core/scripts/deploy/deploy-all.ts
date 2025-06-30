@@ -2,6 +2,7 @@ import { ethers } from "hardhat";
 import deployVAI from "./01-deploy-vai-token";
 import deployMembership from "./02-deploy-membership";
 import deployBootstrapBay from "./03-deploy-bootstrap-bay";
+import setupLocalEnv from "../setup-local-env";
 
 interface DeploymentResult {
     vai: {
@@ -110,6 +111,18 @@ async function main(): Promise<DeploymentResult> {
             deploymentSummary
         };
         
+        // Auto-setup environment for localhost
+        if (network.chainId === 31337n || network.name === "localhost") {
+            console.log("\n🎯 PHASE 4: Setting up Local Environment");
+            console.log("-".repeat(40));
+            
+            setupLocalEnv({
+                VAI_TOKEN: results.vai.address,
+                MEMBERSHIP: results.membership.address,
+                BOOTSTRAP_BAY: results.bootstrapBay.address,
+            });
+        }
+        
         // Success Summary
         console.log("\n" + "=".repeat(60));
         console.log("🎉 DEPLOYMENT COMPLETED SUCCESSFULLY!");
@@ -133,16 +146,25 @@ async function main(): Promise<DeploymentResult> {
         console.log(`│ Deployer        │ ${deployer.address} │`);
         console.log("└─────────────────┴──────────────────────────────────────────────┘");
         
-        console.log("\n🔗 VERIFICATION COMMANDS:");
-        console.log(`npx hardhat verify --network ${network.name} ${results.vai.address} "Defi AI" "DEAI" "391000000000000000000"`);
-        console.log(`npx hardhat verify --network ${network.name} ${results.membership.address}`);
-        console.log(`npx hardhat verify --network ${network.name} ${results.bootstrapBay.address} "[[\\"${ethers.parseEther("0.1")}\\",\\"${ethers.parseEther("10")}\\",\\"100\\",\\"${ethers.parseUnits("1000000", 9)}\\",\\"${Math.floor(Date.now() / 1000) + (180 * 24 * 60 * 60)}\\",true]]"`);
+        if (network.chainId !== 31337n && network.name !== "localhost") {
+            console.log("\n🔗 VERIFICATION COMMANDS:");
+            console.log(`npx hardhat verify --network ${network.name} ${results.vai.address} "Value Artificial intelligence" "VAI" "391000000000000000000"`);
+            console.log(`npx hardhat verify --network ${network.name} ${results.membership.address}`);
+            console.log(`npx hardhat verify --network ${network.name} ${results.bootstrapBay.address} "[[\\"${ethers.parseEther("0.1")}\\",\\"${ethers.parseEther("10")}\\",\\"100\\",\\"${ethers.parseUnits("1000000", 9)}\\",\\"${Math.floor(Date.now() / 1000) + (180 * 24 * 60 * 60)}\\",true]]"`);
+        }
         
         console.log("\n✨ Next Steps:");
-        console.log("1. Verify all contracts on block explorer");
-        console.log("2. Set up inter-contract permissions");
-        console.log("3. Configure referral commission rates");
-        console.log("4. Initialize bootstrap rounds");
+        if (network.chainId === 31337n || network.name === "localhost") {
+            console.log("1. Set your NEXT_PUBLIC_PROJECT_ID in apps/web/.env.local");
+            console.log("2. Start the web app: cd apps/web && pnpm dev");
+            console.log("3. Connect MetaMask to localhost:8545");
+            console.log("4. Import one of the hardhat accounts to MetaMask");
+        } else {
+            console.log("1. Verify all contracts on block explorer");
+            console.log("2. Set up inter-contract permissions");
+            console.log("3. Configure referral commission rates");
+            console.log("4. Initialize bootstrap rounds");
+        }
         console.log("5. Run integration tests");
         
         console.log("\n" + "=".repeat(60));

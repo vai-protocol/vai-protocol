@@ -1,5 +1,10 @@
 // Contract addresses for different networks
 export const CONTRACT_ADDRESSES = {
+  localhost: {
+    VAI_TOKEN: process.env.NEXT_PUBLIC_VAI_TOKEN_LOCALHOST || "",
+    MEMBERSHIP: process.env.NEXT_PUBLIC_MEMBERSHIP_LOCALHOST || "",
+    BOOTSTRAP_BAY: process.env.NEXT_PUBLIC_BOOTSTRAP_BAY_LOCALHOST || "",
+  },
   bsc: {
     VAI_TOKEN: process.env.NEXT_PUBLIC_VAI_TOKEN_BSC || "",
     MEMBERSHIP: process.env.NEXT_PUBLIC_MEMBERSHIP_BSC || "",
@@ -14,6 +19,7 @@ export const CONTRACT_ADDRESSES = {
 
 // Network mapping
 export const NETWORK_NAMES = {
+  31337: "localhost",
   56: "bsc",
   97: "bscTestnet",
 } as const;

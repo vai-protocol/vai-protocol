@@ -3,6 +3,22 @@ import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { bsc, bscTestnet } from "@reown/appkit/networks";
 import type { Chain } from "viem"; // Import Chain type for explicit typing
 
+// Define localhost/hardhat chain
+const localhost = {
+  id: 31337,
+  name: "Localhost",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Ether",
+    symbol: "ETH",
+  },
+  rpcUrls: {
+    default: {
+      http: ["http://127.0.0.1:8545"],
+    },
+  },
+} as const satisfies Chain;
+
 // Read Project ID from environment variables
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 
@@ -15,7 +31,9 @@ if (!projectId) {
 
 // Define supported networks based on environment
 const isDev = process.env.NODE_ENV === "development";
-export const networks: [Chain, ...Chain[]] = isDev ? [bscTestnet] : [bsc];
+export const networks: [Chain, ...Chain[]] = isDev 
+  ? [localhost, bscTestnet] 
+  : [bsc];
 
 // Create the Wagmi adapter instance
 export const wagmiAdapter = new WagmiAdapter({
