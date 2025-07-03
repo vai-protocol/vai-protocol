@@ -6,21 +6,21 @@ import { WagmiProvider, cookieToInitialState, type Config } from "wagmi";
 import { createAppKit } from "@reown/appkit/react";
 // Import config, networks, projectId, and wagmiAdapter from your config file
 import { config, networks, projectId, wagmiAdapter } from "../config";
-// Import the networks for default selection
-import { bsc, bscTestnet } from "@reown/appkit/networks";
 
 const queryClient = new QueryClient();
 
 const metadata = {
-  name: "Your App Name",
-  description: "Your App Description",
-  url: typeof window !== "undefined" ? window.location.origin : "YOUR_APP_URL", // Replace YOUR_APP_URL
-  icons: ["YOUR_ICON_URL"], // Replace YOUR_ICON_URL
+  name: "VAI Protocol",
+  description: "Decentralized AI Economy Platform",
+  url:
+    typeof window !== "undefined"
+      ? window.location.origin
+      : "https://vai-protocol.com",
+  icons: ["/favicon.ico"],
 };
 
-// Get default network based on environment
-const isDev = process.env.NODE_ENV === "development";
-const defaultNetwork = isDev ? bscTestnet : bsc;
+// Use the single network from config
+const defaultNetwork = networks[0];
 
 // Initialize AppKit *outside* the component render cycle
 // Add a check for projectId for type safety, although config throws error already.
@@ -32,11 +32,12 @@ if (!projectId) {
     adapters: [wagmiAdapter],
     // Use non-null assertion `!` as projectId is checked runtime, needed for TypeScript
     projectId: projectId!,
-    // Pass networks directly (type is now correctly inferred from config)
+    // Pass the single network from config
     networks: networks,
     defaultNetwork: defaultNetwork,
     metadata,
-    // enableNetworkSwitch: false,
+    // Disable network switching since we only have one network
+    enableNetworkSwitch: false,
     features: {
       analytics: true,
       email: false,
