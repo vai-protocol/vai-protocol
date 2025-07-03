@@ -1,4 +1,4 @@
-import AffiliateOverview from "../../../components/Affiliate/AffiliateOverview";
+import AffiliateOverview from "../../../../components/Affiliate/AffiliateOverview";
 
 export default function AffiliatePage() {
   return (
@@ -6,4 +6,4 @@ export default function AffiliatePage() {
       <AffiliateOverview />
     </div>
   );
-} 
+}

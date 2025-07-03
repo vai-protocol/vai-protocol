@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContractService } from "./contractService";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { formatUnits, parseUnits, formatEther } from "viem";
@@ -44,28 +45,84 @@ export const usePortfolio = () => {
         throw new Error("No wallet connected or client unavailable");
 
       try {
-        // Get contracts
-        const vaiContract = contractService.getVAIContract();
-        const membershipContract = contractService.getMembershipContract();
+        // Get contracts with error handling for missing addresses
+        let vaiContract, membershipContract;
+
+        try {
+          vaiContract = contractService.getVAIContract();
+          membershipContract = contractService.getMembershipContract();
+        } catch (configError) {
+          console.warn("Contract addresses not configured:", configError);
+          console.info(
+            "To fix this, set the following environment variables in .env.local:"
+          );
+          console.info("NEXT_PUBLIC_VAI_TOKEN=0x...");
+          console.info("NEXT_PUBLIC_MEMBERSHIP=0x...");
+          console.info("NEXT_PUBLIC_BOOTSTRAP_BAY=0x...");
+
+          return {
+            vaiBalance: "0",
+            bnbBalance: "0",
+            totalEarnings: "0",
+            referralEarnings: "0",
+            claimableCommissions: "0",
+            membershipStatus: false,
+            adaptationScore: 0,
+            referralCount: 0,
+            joinedAt: 0,
+            referrerAddress: "",
+          };
+        }
+
+        // Double check contract addresses are available
+        if (!vaiContract.address || !membershipContract.address) {
+          console.warn(
+            "Contract addresses not configured, using fallback values"
+          );
+          return {
+            vaiBalance: "0",
+            bnbBalance: "0",
+            totalEarnings: "0",
+            referralEarnings: "0",
+            claimableCommissions: "0",
+            membershipStatus: false,
+            adaptationScore: 0,
+            referralCount: 0,
+            joinedAt: 0,
+            referrerAddress: "",
+          };
+        }
 
         // Fetch BNB balance
-        const bnbBalance = await publicClient.getBalance({ address });
+        const bnbBalance = await publicClient
+          .getBalance({ address })
+          .catch(() => BigInt(0));
 
         // Fetch VAI balance
-        const vaiBalance = await publicClient.readContract({
-          address: vaiContract.address,
-          abi: vaiContract.abi,
-          functionName: "balanceOf",
-          args: [address],
-        });
+        const vaiBalance = await publicClient
+          .readContract({
+            address: vaiContract.address,
+            abi: vaiContract.abi,
+            functionName: "balanceOf",
+            args: [address],
+          })
+          .catch((error) => {
+            console.warn("Failed to fetch VAI balance:", error);
+            return BigInt(0);
+          });
 
         // Check membership status
-        const isMember = await publicClient.readContract({
-          address: membershipContract.address,
-          abi: membershipContract.abi,
-          functionName: "isMember",
-          args: [address],
-        });
+        const isMember = await publicClient
+          .readContract({
+            address: membershipContract.address,
+            abi: membershipContract.abi,
+            functionName: "isMember",
+            args: [address],
+          })
+          .catch((error) => {
+            console.warn("Failed to check membership status:", error);
+            return false;
+          });
 
         // Initialize default member data
         let memberInfo = {
@@ -91,37 +148,59 @@ export const usePortfolio = () => {
               args: [address],
             })) as any[];
 
-            memberInfo = {
-              adaptation: memberData[0],
-              referrer: memberData[1],
-              totalEarnings: memberData[2],
-              referralEarnings: memberData[3],
-              referralCount: memberData[4],
-              isActive: memberData[5],
-              joinedAt: memberData[6],
-            };
+            if (
+              memberData &&
+              Array.isArray(memberData) &&
+              memberData.length >= 7
+            ) {
+              memberInfo = {
+                adaptation: memberData[0] || BigInt(0),
+                referrer:
+                  memberData[1] || "0x0000000000000000000000000000000000000000",
+                totalEarnings: memberData[2] || BigInt(0),
+                referralEarnings: memberData[3] || BigInt(0),
+                referralCount: memberData[4] || BigInt(0),
+                isActive: memberData[5] || false,
+                joinedAt: memberData[6] || BigInt(0),
+              };
+            }
 
-            claimableCommissions = (await publicClient.readContract({
-              address: membershipContract.address,
-              abi: membershipContract.abi,
-              functionName: "getClaimableCommissions",
-              args: [address],
-            })) as bigint;
+            claimableCommissions = (await publicClient
+              .readContract({
+                address: membershipContract.address,
+                abi: membershipContract.abi,
+                functionName: "getClaimableCommissions",
+                args: [address],
+              })
+              .catch((error) => {
+                console.warn("Failed to fetch claimable commissions:", error);
+                return BigInt(0);
+              })) as bigint;
           } catch (error) {
             console.warn("Error fetching member info:", error);
           }
         }
 
         return {
-          vaiBalance: formatUnits(vaiBalance as bigint, 9), // VAI has 9 decimals
-          bnbBalance: formatEther(bnbBalance),
-          totalEarnings: formatEther(memberInfo.totalEarnings),
-          referralEarnings: formatEther(memberInfo.referralEarnings),
-          claimableCommissions: formatEther(claimableCommissions),
+          vaiBalance: vaiBalance ? formatUnits(vaiBalance as bigint, 9) : "0", // VAI has 9 decimals
+          bnbBalance: bnbBalance ? formatEther(bnbBalance) : "0",
+          totalEarnings: memberInfo.totalEarnings
+            ? formatEther(memberInfo.totalEarnings)
+            : "0",
+          referralEarnings: memberInfo.referralEarnings
+            ? formatEther(memberInfo.referralEarnings)
+            : "0",
+          claimableCommissions: claimableCommissions
+            ? formatEther(claimableCommissions)
+            : "0",
           membershipStatus: isMember as boolean,
-          adaptationScore: Number(memberInfo.adaptation),
-          referralCount: Number(memberInfo.referralCount),
-          joinedAt: Number(memberInfo.joinedAt),
+          adaptationScore: memberInfo.adaptation
+            ? Number(memberInfo.adaptation)
+            : 0,
+          referralCount: memberInfo.referralCount
+            ? Number(memberInfo.referralCount)
+            : 0,
+          joinedAt: memberInfo.joinedAt ? Number(memberInfo.joinedAt) : 0,
           referrerAddress:
             memberInfo.referrer === "0x0000000000000000000000000000000000000000"
               ? ""
@@ -151,16 +230,24 @@ export const useTransactionHistory = (limit: number = 20) => {
       try {
         const transactions: TransactionHistory[] = [];
 
+        // Get contract addresses with error handling
+        let vaiAddress, membershipAddress, bootstrapAddress;
+
+        try {
+          vaiAddress = contractService.getVAIContract().address;
+          membershipAddress = contractService.getMembershipContract().address;
+          bootstrapAddress = contractService.getBootstrapBayContract().address;
+        } catch (configError) {
+          console.warn(
+            "Contract addresses not configured for transaction history:",
+            configError
+          );
+          return [];
+        }
+
         // Get recent blocks to scan for transactions
         const latestBlock = await publicClient.getBlockNumber();
         const fromBlock = latestBlock - BigInt(10000); // Scan last ~10000 blocks
-
-        // Get contract addresses
-        const vaiAddress = contractService.getVAIContract().address;
-        const membershipAddress =
-          contractService.getMembershipContract().address;
-        const bootstrapAddress =
-          contractService.getBootstrapBayContract().address;
 
         // Get transaction logs for various contract interactions
         const vaiLogs = await publicClient.getLogs({
@@ -361,7 +448,15 @@ export const usePortfolioActions = () => {
     try {
       if (!walletClient) throw new Error("Wallet client not available");
 
-      const membershipContract = contractService.getMembershipContract();
+      let membershipContract;
+      try {
+        membershipContract = contractService.getMembershipContract();
+      } catch (configError) {
+        throw new Error(
+          "Membership contract not configured. Please set NEXT_PUBLIC_MEMBERSHIP in .env.local"
+        );
+      }
+
       const hash = await walletClient.writeContract({
         address: membershipContract.address,
         abi: membershipContract.abi,
@@ -379,7 +474,15 @@ export const usePortfolioActions = () => {
     try {
       if (!walletClient) throw new Error("Wallet client not available");
 
-      const vaiContract = contractService.getVAIContract();
+      let vaiContract;
+      try {
+        vaiContract = contractService.getVAIContract();
+      } catch (configError) {
+        throw new Error(
+          "VAI contract not configured. Please set NEXT_PUBLIC_VAI_TOKEN in .env.local"
+        );
+      }
+
       const parsedAmount = parseUnits(amount, 9); // VAI has 9 decimals
       const hash = await walletClient.writeContract({
         address: vaiContract.address,
@@ -398,7 +501,15 @@ export const usePortfolioActions = () => {
     try {
       if (!walletClient) throw new Error("Wallet client not available");
 
-      const vaiContract = contractService.getVAIContract();
+      let vaiContract;
+      try {
+        vaiContract = contractService.getVAIContract();
+      } catch (configError) {
+        throw new Error(
+          "VAI contract not configured. Please set NEXT_PUBLIC_VAI_TOKEN in .env.local"
+        );
+      }
+
       const parsedAmount = parseUnits(amount, 9); // VAI has 9 decimals
       const hash = await walletClient.writeContract({
         address: vaiContract.address,

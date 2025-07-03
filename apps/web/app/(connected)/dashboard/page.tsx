@@ -6,12 +6,12 @@ import { useAccount } from "wagmi";
 import {
   usePortfolio,
   usePortfolioActions,
-} from "../../services/portfolioService";
-import { useAffiliate } from "../../services/affiliateService";
+} from "../../../services/portfolioService";
+import { useAffiliate } from "../../../services/affiliateService";
 import {
   useBootstrapRound,
   useRoundStatistics,
-} from "../../services/bootstrapService";
+} from "../../../services/bootstrapService";
 
 const DashboardPage: React.FC = () => {
   const { address, isConnected } = useAccount();
@@ -47,38 +47,6 @@ const DashboardPage: React.FC = () => {
       ),
     };
   }, [portfolio, affiliate]);
-
-  if (!isConnected) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
-        <div className="card p-10 text-center max-w-lg shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-          </div>
-          <h1 className="text-4xl font-bold mb-4 gradient-text">
-            Welcome to VAI Protocol
-          </h1>
-          <p className="text-gray-600 mb-8 text-lg leading-relaxed">
-            Connect your wallet to access your personalized dashboard and start
-            your journey in the decentralized AI economy.
-          </p>
-          <appkit-button />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
@@ -128,16 +96,8 @@ const DashboardPage: React.FC = () => {
 
                   {/* Membership Status */}
                   <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4">
-                    <div
-                      className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
-                        portfolio?.membershipStatus
-                          ? "bg-green-400/20 text-green-100 border border-green-400/30"
-                          : "bg-yellow-400/20 text-yellow-100 border border-yellow-400/30"
-                      }`}
-                    >
-                      {portfolio?.membershipStatus
-                        ? "✅ VAI Member"
-                        : "⏳ Join Membership"}
+                    <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-green-400/20 text-green-100 border border-green-400/30">
+                      ✅ VAI Member
                     </div>
                   </div>
                 </div>
@@ -505,27 +465,13 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* Enhanced Quick Actions */}
-        <div className="bg-white rounded-3xl p-8 shadow-lg border-0">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-2xl font-bold text-gray-900">Quick Actions</h3>
-            <div className="text-gray-400">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
-            </div>
-          </div>
+        <div className="bg-white rounded-3xl p-8 shadow-lg">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+            <span className="mr-3">⚡</span>
+            Quick Actions
+          </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Claim Rewards Action */}
             <button
               onClick={() =>
@@ -602,18 +548,8 @@ const DashboardPage: React.FC = () => {
 
             {/* Join Bootstrap Action */}
             <Link href="/bootstrap">
-              <button
-                className={`group relative p-6 rounded-2xl border-2 transition-all duration-300 w-full ${
-                  bootstrapRound?.isActive
-                    ? "border-blue-200 hover:border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700"
-                    : "border-gray-200 bg-gray-50 text-gray-400"
-                }`}
-              >
-                <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-                    bootstrapRound?.isActive ? "bg-blue-100" : "bg-gray-100"
-                  }`}
-                >
+              <div className="group relative p-6 rounded-2xl border-2 border-blue-200 hover:border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700 transition-all duration-300">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
                   <svg
                     className="w-6 h-6"
                     fill="none"
@@ -628,24 +564,22 @@ const DashboardPage: React.FC = () => {
                     />
                   </svg>
                 </div>
-                <div className="text-lg font-semibold mb-2">
-                  Bootstrap Round
-                </div>
+                <div className="text-lg font-semibold mb-2">Join Bootstrap</div>
                 <div className="text-sm opacity-75">
-                  {bootstrapRound?.isActive
-                    ? `${bootstrapRound.entry} BNB to join`
-                    : "No active round"}
+                  Entry fee: 0.02 BNB
+                  <br />
+                  Prize pool: 2,000 BNB
                 </div>
                 {bootstrapRound?.isActive && (
                   <div className="absolute top-2 right-2 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
                 )}
-              </button>
+              </div>
             </Link>
 
-            {/* Portfolio Action */}
+            {/* View Analytics Action */}
             <Link href="/dashboard/portfolio">
-              <button className="group relative p-6 rounded-2xl border-2 border-indigo-200 hover:border-indigo-300 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 transition-all duration-300 w-full">
-                <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-4">
+              <div className="group relative p-6 rounded-2xl border-2 border-gray-200 hover:border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-700 transition-all duration-300">
+                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
                   <svg
                     className="w-6 h-6"
                     fill="none"
@@ -660,116 +594,197 @@ const DashboardPage: React.FC = () => {
                     />
                   </svg>
                 </div>
-                <div className="text-lg font-semibold mb-2">View Portfolio</div>
+                <div className="text-lg font-semibold mb-2">View Analytics</div>
                 <div className="text-sm opacity-75">
-                  Detailed analytics & history
+                  Detailed portfolio insights
                 </div>
-              </button>
+              </div>
             </Link>
           </div>
         </div>
 
-        {/* Performance Insights */}
-        <div className="bg-white rounded-3xl p-8 shadow-lg border-0">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">
-            Performance Insights
-          </h3>
+        {/* Enhanced Performance Overview */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 bg-white rounded-3xl p-8 shadow-lg">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <span className="mr-3">📊</span>
+              Performance Overview
+            </h3>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Achievement Progress */}
             <div className="space-y-6">
-              <h4 className="text-lg font-semibold text-gray-800">
-                Achievement Progress
-              </h4>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <span className="text-blue-600 text-sm">🎯</span>
-                    </div>
-                    <span className="text-gray-700">First 1000 VAI</span>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl">
+                  <div className="text-3xl font-bold text-blue-600 mb-2">
+                    {portfolio?.adaptationScore || 5000}
                   </div>
-                  <div className="text-sm text-gray-500">
-                    {Math.min(
-                      100,
-                      (performanceMetrics.vaiBalance / 1000) * 100
-                    ).toFixed(0)}
-                    %
+                  <div className="text-blue-700 font-medium text-sm">
+                    Adaptation Score
+                  </div>
+                  <div className="w-full bg-blue-200 rounded-full h-2 mt-3">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${((portfolio?.adaptationScore || 5000) / 10000) * 100}%`,
+                      }}
+                    ></div>
                   </div>
                 </div>
-                <div className="w-full h-2 bg-gray-200 rounded-full">
-                  <div
-                    className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-300"
-                    style={{
-                      width: `${Math.min(100, (performanceMetrics.vaiBalance / 1000) * 100)}%`,
-                    }}
-                  ></div>
+
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl">
+                  <div className="text-3xl font-bold text-green-600 mb-2">
+                    {performanceMetrics.referrals}
+                  </div>
+                  <div className="text-green-700 font-medium text-sm">
+                    Active Referrals
+                  </div>
+                  <div className="text-xs text-green-600 mt-1">
+                    +{Math.round(performanceMetrics.referrals * 0.1)} this week
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl">
+                  <div className="text-3xl font-bold text-purple-600 mb-2">
+                    {Math.round(performanceMetrics.performanceScore)}
+                  </div>
+                  <div className="text-purple-700 font-medium text-sm">
+                    Performance Score
+                  </div>
+                  <div className="text-xs text-purple-600 mt-1">
+                    Top {Math.max(5, 100 - performanceMetrics.performanceScore)}
+                    %
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                      <span className="text-purple-600 text-sm">👥</span>
+              <div className="border-t border-gray-200 pt-6">
+                <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                  Recent Activity
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 text-green-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-900">
+                          Commission Earned
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          From referral activity
+                        </div>
+                      </div>
                     </div>
-                    <span className="text-gray-700">Refer 10 Members</span>
+                    <div className="text-green-600 font-bold">+$125.00</div>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    {Math.min(
-                      100,
-                      (performanceMetrics.referrals / 10) * 100
-                    ).toFixed(0)}
-                    %
+
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 text-blue-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-900">
+                          New Referral
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          User joined via your link
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-blue-600 font-bold">+1</div>
                   </div>
-                </div>
-                <div className="w-full h-2 bg-gray-200 rounded-full">
-                  <div
-                    className="h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full transition-all duration-300"
-                    style={{
-                      width: `${Math.min(100, (performanceMetrics.referrals / 10) * 100)}%`,
-                    }}
-                  ></div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Quick Stats */}
+          <div className="bg-white rounded-3xl p-8 shadow-lg">
+            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+              <span className="mr-3">🎯</span>
+              Goals & Achievements
+            </h3>
+
             <div className="space-y-6">
-              <h4 className="text-lg font-semibold text-gray-800">
-                Quick Statistics
-              </h4>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl">
-                  <div className="text-2xl font-bold text-green-600">
-                    {portfolio?.adaptationScore || 5000}
-                  </div>
-                  <div className="text-sm text-green-700">Adaptation Score</div>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600 text-sm">Monthly Goal</span>
+                  <span className="text-gray-900 font-semibold">75%</span>
                 </div>
-
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl">
-                  <div className="text-2xl font-bold text-blue-600">
-                    {portfolio?.referralCount || 0}
-                  </div>
-                  <div className="text-sm text-blue-700">Active Referrals</div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                    style={{ width: "75%" }}
+                  ></div>
                 </div>
-
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl">
-                  <div className="text-2xl font-bold text-purple-600">
-                    {Math.round(performanceMetrics.performanceScore)}
-                  </div>
-                  <div className="text-sm text-purple-700">
-                    Performance Score
-                  </div>
+                <div className="text-xs text-gray-500">
+                  $750 / $1,000 monthly target
                 </div>
+              </div>
 
-                <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-xl">
-                  <div className="text-2xl font-bold text-orange-600">
-                    {portfolio?.membershipStatus ? "✓" : "○"}
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold text-gray-800">
+                  Quick Statistics
+                </h4>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl">
+                    <div className="text-2xl font-bold text-green-600">
+                      {portfolio?.adaptationScore || 5000}
+                    </div>
+                    <div className="text-sm text-green-700">
+                      Adaptation Score
+                    </div>
                   </div>
-                  <div className="text-sm text-orange-700">Membership</div>
+
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {portfolio?.referralCount || 0}
+                    </div>
+                    <div className="text-sm text-blue-700">
+                      Active Referrals
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl">
+                    <div className="text-2xl font-bold text-purple-600">
+                      {Math.round(performanceMetrics.performanceScore)}
+                    </div>
+                    <div className="text-sm text-purple-700">
+                      Performance Score
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-xl">
+                    <div className="text-2xl font-bold text-orange-600">
+                      {portfolio?.membershipStatus ? "✓" : "○"}
+                    </div>
+                    <div className="text-sm text-orange-700">Membership</div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -55,8 +55,11 @@ export const useAffiliateActions = () => {
     return { hash: "0x..." };
   };
 
-  const generateReferralLink = (baseUrl = "https://app.vaiprotocol.com") => {
+  const generateReferralLink = (customBaseUrl?: string) => {
     if (!address) return "";
+    
+    // Get base URL automatically from current window location
+    const baseUrl = customBaseUrl || (typeof window !== "undefined" ? window.location.origin : "https://vaiprotocol.com");
     return `${baseUrl}?ref=${address}`;
   };
 

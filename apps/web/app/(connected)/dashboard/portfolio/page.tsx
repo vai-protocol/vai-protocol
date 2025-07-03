@@ -1,4 +1,4 @@
-import PortfolioOverview from "../../../components/Portfolio/PortfolioOverview";
+import PortfolioOverview from "../../../../components/Portfolio/PortfolioOverview";
 
 export default function PortfolioPage() {
   return (

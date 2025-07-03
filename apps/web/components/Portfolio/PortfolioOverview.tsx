@@ -325,7 +325,9 @@ const PortfolioOverview: React.FC = () => {
               </button>
               <button
                 className="btn-secondary w-full flex items-center justify-center"
-                onClick={() => (window.location.href = "/dashboard/affiliate")}
+                onClick={() =>
+                  (window.location.href = "/dashboard/affiliate")
+                }
               >
                 <span className="mr-2">👥</span>
                 View Referrals
