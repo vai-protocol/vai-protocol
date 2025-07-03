@@ -23,6 +23,7 @@
     "deploy:local": "pnpm deploy:all --network localhost",
     "deploy:testnet": "pnpm deploy:all --network bscTestnet",
     "deploy:mainnet": "pnpm deploy:all --network bsc",
+    "generate:local": "hardhat run scripts/demo/generate-referral-data.ts --network localhost",
     "verify": "hardhat verify"
   },
   "devDependencies": {

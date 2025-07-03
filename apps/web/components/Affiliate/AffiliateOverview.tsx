@@ -6,15 +6,19 @@ import {
   useAffiliate,
   useAffiliateActions,
   useReferralStats,
+  useVAIBalance,
+  // type ReferredUser,
 } from "../../services/affiliateService";
 
 const AffiliateOverview: React.FC = () => {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { data: affiliate, isLoading, error } = useAffiliate();
   const { data: stats } = useReferralStats();
+  const { data: vaiBalance } = useVAIBalance();
   const { generateReferralLink, claimReferralCommissions } =
     useAffiliateActions();
   const [copiedLink, setCopiedLink] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   if (!isConnected) {
     return (
@@ -70,15 +74,139 @@ const AffiliateOverview: React.FC = () => {
     try {
       const result = await claimReferralCommissions();
       console.log("Commissions claimed:", result);
-      // TODO: Show success notification
+      // TODO: Show success notification and refresh data
     } catch (error) {
       console.error("Error claiming commissions:", error);
       // TODO: Show error notification
     }
   };
 
+  const handleRefreshData = async () => {
+    setRefreshing(true);
+    try {
+      // Force refetch all queries
+      window.location.reload(); // Simple refresh for now
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {/* Data Source Notice */}
+      {affiliate && (
+        <div
+          className={`border rounded-lg p-4 ${
+            affiliate.totalReferrals > 0
+              ? "bg-green-50 border-green-200"
+              : "bg-yellow-50 border-yellow-200"
+          }`}
+        >
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <svg
+                className={`h-5 w-5 ${
+                  affiliate.totalReferrals > 0
+                    ? "text-green-600"
+                    : "text-yellow-600"
+                }`}
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p
+                className={`text-sm ${
+                  affiliate.totalReferrals > 0
+                    ? "text-green-800"
+                    : "text-yellow-800"
+                }`}
+              >
+                {affiliate.totalReferrals > 0 ? (
+                  <>
+                    <span className="font-semibold">Live Data:</span> Displaying
+                    real referral data from membership contract. All commissions
+                    are paid in VAI tokens.
+                  </>
+                ) : (
+                  <>
+                    <span className="font-semibold">No Referrals:</span> No
+                    referrals found for this address. Share your referral link
+                    to start earning VAI commissions!
+                  </>
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Contract Integration Info */}
+      {/* {address && (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="flex-1">
+              <p className="text-sm text-gray-600">
+                <span className="font-semibold">Current Address:</span>
+                <code className="ml-1 bg-white px-2 py-1 rounded font-mono text-xs">
+                  {address}
+                </code>
+              </p>
+              <p className="text-xs text-gray-500 mt-2">
+                <span className="font-semibold">Data Source:</span>
+              </p>
+              <div className="mt-1 space-y-1 text-xs text-gray-500">
+                <div>
+                  <span className="font-medium">Live Contract Data</span> - Real
+                  referral data from membership contract
+                </div>
+                <div>
+                  <span className="font-medium">Empty State</span> - When no
+                  referrals exist or contracts not available
+                </div>
+              </div>
+
+              {affiliate && affiliate.totalReferrals === 0 && (
+                <div className="mt-2 p-2 bg-yellow-100 rounded text-xs">
+                  <p className="text-yellow-800">
+                    <span className="font-semibold">No referrals found.</span>{" "}
+                    Possible reasons:
+                  </p>
+                  <ul className="list-disc list-inside mt-1 text-yellow-700">
+                    <li>You haven&apos;t referred anyone yet</li>
+                    <li>You&apos;re not a member of the protocol</li>
+                    <li>Membership contract not deployed/configured</li>
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 md:mt-0 md:ml-4">
+              <p className="text-xs text-gray-500 mb-2">Contract Status:</p>
+              <div className="space-y-2">
+                <div className="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+                  Reading from Membership Contract
+                </div>
+                <div className="px-3 py-1 text-xs bg-indigo-100 text-indigo-800 rounded">
+                  VAI Token Integration (9 decimals)
+                </div>
+                <div className="px-3 py-1 text-xs bg-green-100 text-green-800 rounded">
+                  Real-time Data Updates
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )} */}
+
       {/* Header */}
       <div className="card p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -88,7 +216,27 @@ const AffiliateOverview: React.FC = () => {
               Earn {affiliate?.referralRate}% commission on every referral
             </p>
           </div>
-          <div className="mt-4 md:mt-0">
+          <div className="mt-4 md:mt-0 flex items-center gap-3">
+            <button
+              onClick={handleRefreshData}
+              disabled={refreshing}
+              className="flex items-center gap-2 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded transition-colors disabled:opacity-50"
+            >
+              <svg
+                className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              {refreshing ? "Refreshing..." : "Refresh"}
+            </button>
             <span className="px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800">
               Code: {affiliate?.referralCode}
             </span>
@@ -97,7 +245,14 @@ const AffiliateOverview: React.FC = () => {
       </div>
 
       {/* Commission Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="stat-card">
+          <div className="text-sm text-gray-500 mb-1">VAI Balance</div>
+          <div className="text-2xl font-bold text-indigo-600">
+            {parseFloat(vaiBalance || "0").toLocaleString()} VAI
+          </div>
+        </div>
+
         <div className="stat-card">
           <div className="text-sm text-gray-500 mb-1">Total Referrals</div>
           <div className="text-2xl font-bold text-blue-600">
@@ -108,24 +263,25 @@ const AffiliateOverview: React.FC = () => {
         <div className="stat-card">
           <div className="text-sm text-gray-500 mb-1">Total Commissions</div>
           <div className="text-2xl font-bold text-green-600">
-            ${parseFloat(affiliate?.totalCommissions || "0").toLocaleString()}
+            {parseFloat(affiliate?.totalCommissions || "0").toLocaleString()}{" "}
+            VAI
           </div>
         </div>
 
         <div className="stat-card">
           <div className="text-sm text-gray-500 mb-1">Monthly Earnings</div>
           <div className="text-2xl font-bold text-purple-600">
-            ${parseFloat(affiliate?.monthlyEarnings || "0").toLocaleString()}
+            {parseFloat(affiliate?.monthlyEarnings || "0").toLocaleString()} VAI
           </div>
         </div>
 
         <div className="stat-card">
           <div className="text-sm text-gray-500 mb-1">Claimable</div>
           <div className="text-2xl font-bold text-orange-600">
-            $
             {parseFloat(
               affiliate?.claimableCommissions || "0"
-            ).toLocaleString()}
+            ).toLocaleString()}{" "}
+            VAI
           </div>
         </div>
       </div>
@@ -139,9 +295,9 @@ const AffiliateOverview: React.FC = () => {
                 Commission Ready to Claim
               </h3>
               <p className="text-green-600">
-                You have $
-                {parseFloat(affiliate.claimableCommissions).toLocaleString()} in
-                commissions available
+                You have{" "}
+                {parseFloat(affiliate.claimableCommissions).toLocaleString()}{" "}
+                VAI in commissions available
               </p>
             </div>
             <button
@@ -195,13 +351,13 @@ const AffiliateOverview: React.FC = () => {
             <div className="flex justify-between">
               <span className="text-gray-600">Total Volume</span>
               <span className="font-semibold">
-                ${stats?.totalVolume || "0"}
+                {stats?.totalVolume || "0"} VAI
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">This Month</span>
               <span className="font-semibold">
-                ${stats?.thisMonthVolume || "0"}
+                {stats?.thisMonthVolume || "0"} VAI
               </span>
             </div>
             <div className="flex justify-between">
@@ -237,16 +393,24 @@ const AffiliateOverview: React.FC = () => {
               <tbody>
                 {affiliate.referredUsers.slice(0, 5).map((user, index) => (
                   <tr key={index} className="border-b border-gray-100">
+                    <td className="py-3 font-mono text-sm">{user.address}</td>
                     <td className="py-3">
-                      {user.slice(0, 6)}...{user.slice(-4)}
+                      {new Date(user.joinedAt).toLocaleDateString()}
                     </td>
-                    <td className="py-3">{new Date().toLocaleDateString()}</td>
                     <td className="py-3">
-                      <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                        Active
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          user.status === "active"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {user.status === "active" ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td className="py-3 text-right">$0.00</td>
+                    <td className="py-3 text-right font-semibold">
+                      {parseFloat(user.commissionEarned).toLocaleString()} VAI
+                    </td>
                   </tr>
                 ))}
               </tbody>
