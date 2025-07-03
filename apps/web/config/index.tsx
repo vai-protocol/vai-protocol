@@ -10,8 +10,8 @@ const localhost = {
   name: "Localhost",
   nativeCurrency: {
     decimals: 18,
-    name: "Ether",
-    symbol: "ETH",
+    name: "Binance Coin",
+    symbol: "BNB",
   },
   rpcUrls: {
     default: {
