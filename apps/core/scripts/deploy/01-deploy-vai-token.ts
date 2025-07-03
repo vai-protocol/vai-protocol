@@ -23,8 +23,8 @@ async function main() {
   );
 
   // Token parameters
-  const TOKEN_NAME = "Defi AI";
-  const TOKEN_SYMBOL = "DEAI";
+  const TOKEN_NAME = "Value AI";
+  const TOKEN_SYMBOL = "VAI";
   const INITIAL_SUPPLY = ethers.parseUnits("391000000000", 9); // 391 billion VAI with 9 decimals
 
   console.log("\n📄 Token Parameters:");
