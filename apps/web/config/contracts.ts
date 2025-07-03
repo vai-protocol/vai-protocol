@@ -1,46 +1,24 @@
-// Contract addresses for different networks
+// Contract addresses - using simple environment variables
+// Network is determined by NEXT_PUBLIC_NETWORK
 export const CONTRACT_ADDRESSES = {
-  localhost: {
-    VAI_TOKEN: process.env.NEXT_PUBLIC_VAI_TOKEN_LOCALHOST || "",
-    MEMBERSHIP: process.env.NEXT_PUBLIC_MEMBERSHIP_LOCALHOST || "",
-    BOOTSTRAP_BAY: process.env.NEXT_PUBLIC_BOOTSTRAP_BAY_LOCALHOST || "",
-  },
-  bsc: {
-    VAI_TOKEN: process.env.NEXT_PUBLIC_VAI_TOKEN_BSC || "",
-    MEMBERSHIP: process.env.NEXT_PUBLIC_MEMBERSHIP_BSC || "",
-    BOOTSTRAP_BAY: process.env.NEXT_PUBLIC_BOOTSTRAP_BAY_BSC || "",
-  },
-  bscTestnet: {
-    VAI_TOKEN: process.env.NEXT_PUBLIC_VAI_TOKEN_BSC_TESTNET || "",
-    MEMBERSHIP: process.env.NEXT_PUBLIC_MEMBERSHIP_BSC_TESTNET || "",
-    BOOTSTRAP_BAY: process.env.NEXT_PUBLIC_BOOTSTRAP_BAY_BSC_TESTNET || "",
-  },
+  VAI_TOKEN: process.env.NEXT_PUBLIC_VAI_TOKEN || "",
+  MEMBERSHIP: process.env.NEXT_PUBLIC_MEMBERSHIP || "",
+  BOOTSTRAP_BAY: process.env.NEXT_PUBLIC_BOOTSTRAP_BAY || "",
 } as const;
 
-// Network mapping
-export const NETWORK_NAMES = {
-  31337: "localhost",
-  56: "bsc",
-  97: "bscTestnet",
-} as const;
-
-export type NetworkName = keyof typeof CONTRACT_ADDRESSES;
-export type ContractName = keyof typeof CONTRACT_ADDRESSES.bsc;
+// Contract names type
+export type ContractName = keyof typeof CONTRACT_ADDRESSES;
 
 // Helper function to get contract address
 export const getContractAddress = (
   chainId: number,
   contractName: ContractName
 ): string => {
-  const networkName = NETWORK_NAMES[chainId as keyof typeof NETWORK_NAMES];
-  if (!networkName) {
-    throw new Error(`Unsupported chain ID: ${chainId}`);
-  }
-
-  const address = CONTRACT_ADDRESSES[networkName][contractName];
+  const address = CONTRACT_ADDRESSES[contractName];
+  
   if (!address) {
     throw new Error(
-      `Contract ${contractName} not configured for network ${networkName}`
+      `Contract ${contractName} not configured. Please set NEXT_PUBLIC_${contractName} in .env.local`
     );
   }
 

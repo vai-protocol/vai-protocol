@@ -2,6 +2,7 @@ import { cookieStorage, createStorage } from "wagmi"; // Use 'wagmi' directly (W
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { bsc, bscTestnet } from "@reown/appkit/networks";
 import type { Chain } from "viem"; // Import Chain type for explicit typing
+import { CONTRACT_ADDRESSES } from "./contracts";
 
 // Define localhost/hardhat chain
 const localhost = {
@@ -56,6 +57,18 @@ export const currentNetwork = {
   chain: selectedNetwork,
   chainId: selectedNetwork.id,
 };
+
+// Export current configuration for debugging
+export const appConfig = {
+  network: currentNetwork,
+  contracts: CONTRACT_ADDRESSES,
+  projectId,
+};
+
+// Log configuration in development
+if (process.env.NODE_ENV === "development") {
+  console.log("🌐 VAI Protocol Web3 Configuration:", appConfig);
+}
 
 // Create the Wagmi adapter instance
 export const wagmiAdapter = new WagmiAdapter({
