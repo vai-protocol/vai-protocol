@@ -16,20 +16,10 @@ export function setupLocalEnv(addresses: ContractAddresses) {
 # Project ID for WalletConnect
 NEXT_PUBLIC_PROJECT_ID=f7c0b453a4b0ad309e64b1a5c5bfc17a
 
-# Localhost Contract Addresses
-NEXT_PUBLIC_VAI_TOKEN_LOCALHOST=${addresses.VAI_TOKEN}
-NEXT_PUBLIC_MEMBERSHIP_LOCALHOST=${addresses.MEMBERSHIP}
-NEXT_PUBLIC_BOOTSTRAP_BAY_LOCALHOST=${addresses.BOOTSTRAP_BAY}
-
-# BSC Testnet Contract Addresses (if needed)
-NEXT_PUBLIC_VAI_TOKEN_BSC_TESTNET=
-NEXT_PUBLIC_MEMBERSHIP_BSC_TESTNET=
-NEXT_PUBLIC_BOOTSTRAP_BAY_BSC_TESTNET=
-
-# BSC Mainnet Contract Addresses (if needed)
-NEXT_PUBLIC_VAI_TOKEN_BSC=
-NEXT_PUBLIC_MEMBERSHIP_BSC=
-NEXT_PUBLIC_BOOTSTRAP_BAY_BSC=
+# VAI Protocol Contract Addresses
+NEXT_PUBLIC_VAI_TOKEN=${addresses.VAI_TOKEN}
+NEXT_PUBLIC_MEMBERSHIP=${addresses.MEMBERSHIP}
+NEXT_PUBLIC_BOOTSTRAP_BAY=${addresses.BOOTSTRAP_BAY}
 `;
 
   // Create directory if it doesn't exist
@@ -47,7 +37,8 @@ NEXT_PUBLIC_BOOTSTRAP_BAY_BSC=
   console.log("VAI Token:", addresses.VAI_TOKEN);
   console.log("Membership:", addresses.MEMBERSHIP);
   console.log("Bootstrap Bay:", addresses.BOOTSTRAP_BAY);
-  console.log("\n⚠️  Remember to set your NEXT_PUBLIC_PROJECT_ID!");
+  console.log("\n💡 These addresses will work with any network");
+  console.log("⚠️  Remember to set your NEXT_PUBLIC_PROJECT_ID if needed!");
 }
 
 export default setupLocalEnv;

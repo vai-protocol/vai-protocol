@@ -155,15 +155,20 @@ async function main(): Promise<DeploymentResult> {
         
         console.log("\n✨ Next Steps:");
         if (network.chainId === 31337n || network.name === "localhost") {
-            console.log("1. Set your NEXT_PUBLIC_PROJECT_ID in apps/web/.env.local");
+            console.log("1. Environment is automatically configured in apps/web/.env.local");
             console.log("2. Start the web app: cd apps/web && pnpm dev");
             console.log("3. Connect MetaMask to localhost:8545");
             console.log("4. Import one of the hardhat accounts to MetaMask");
+            console.log("5. Optional: Update NEXT_PUBLIC_PROJECT_ID in .env.local if needed");
         } else {
-            console.log("1. Verify all contracts on block explorer");
-            console.log("2. Set up inter-contract permissions");
-            console.log("3. Configure referral commission rates");
-            console.log("4. Initialize bootstrap rounds");
+            console.log("1. Manually update apps/web/.env.local with these contract addresses:");
+            console.log(`   NEXT_PUBLIC_VAI_TOKEN=${results.vai.address}`);
+            console.log(`   NEXT_PUBLIC_MEMBERSHIP=${results.membership.address}`);
+            console.log(`   NEXT_PUBLIC_BOOTSTRAP_BAY=${results.bootstrapBay.address}`);
+            console.log("2. Verify all contracts on block explorer");
+            console.log("3. Set up inter-contract permissions");
+            console.log("4. Configure referral commission rates");
+            console.log("5. Initialize bootstrap rounds");
         }
         console.log("5. Run integration tests");
         
